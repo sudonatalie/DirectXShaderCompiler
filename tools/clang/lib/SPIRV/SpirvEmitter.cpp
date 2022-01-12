@@ -793,6 +793,22 @@ void SpirvEmitter::HandleTranslationUnit(ASTContext &context) {
     }
   }
 
+  
+  spvtools::SpirvTools tools(featureManager.getTargetEnv());
+  std::string output;
+  bool success = tools.Disassemble(m.data(), m.size(), &output);
+  if (success) {
+    printf(" !!! START disassemble\n");
+    printf(output.c_str());
+    printf("\n!!! END disassemble\n");
+  } else {
+    printf(" !!! FAILED disassemble\n");
+  }
+
+  printf("!!! START m.data:\n");
+  printf(reinterpret_cast<const char *>(m.data()));
+  printf("\n!!! END m.data:\n");
+
   theCompilerInstance.getOutStream()->write(
       reinterpret_cast<const char *>(m.data()), m.size() * 4);
 }
@@ -12546,7 +12562,16 @@ bool SpirvEmitter::spirvToolsValidate(std::vector<uint32_t> *mod,
   } else {
     options.SetRelaxBlockLayout(true);
   }
-
+  std::string output;
+  bool success = tools.Disassemble(mod->data(), mod->size(), &output);
+  if (success) {
+  printf(" !!! START disassemble\n");
+  printf(output.c_str());
+  printf("\n!!! END disassemble\n");
+  }
+  else {
+  printf(" !!! FAILED disassemble\n");
+  }
   return tools.Validate(mod->data(), mod->size(), options);
 }
 

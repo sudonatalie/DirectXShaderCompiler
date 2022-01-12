@@ -2148,6 +2148,7 @@ class db_dxil(object):
                 {'n':'keep-name', 'i':'KeepName', 't':'bool', 'c':1, 'd':'Keep name when appending binding'},
             ])
         add_pass('hlsl-dxil-resources-to-handle', 'DxilMutateResourceToHandle', 'Mutate resource to handle',[])
+        add_pass("spirv-gen", "SpirvGen", "Generate SPIR-V from DXIL", [])
 
         category_lib="llvm"
         add_pass('ipsccp', 'IPSCCP', 'Interprocedural Sparse Conditional Constant Propagation', [])

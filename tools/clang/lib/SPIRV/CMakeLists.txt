@@ -11,6 +11,7 @@ add_clang_library(clangSPIRV
   DebugTypeVisitor.cpp
   EmitSpirvAction.cpp
   EmitVisitor.cpp
+  EmitVisitor2.cpp
   FeatureManager.cpp
   GlPerVertex.cpp
   InitListHandler.cpp
@@ -24,6 +25,7 @@ add_clang_library(clangSPIRV
   RemoveBufferBlockVisitor.cpp
   SpirvBasicBlock.cpp
   SpirvBuilder.cpp
+  SpirvBuilder2.cpp
   SpirvContext.cpp
   SpirvEmitter.cpp
   SpirvFunction.cpp

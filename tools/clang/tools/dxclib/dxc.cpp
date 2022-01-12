@@ -818,7 +818,7 @@ int DxcContext::Compile() {
     CComPtr<IDxcBlob> pProgram;
     IFT(pCompileResult->GetResult(&pProgram));
     if (pProgram.p != nullptr) {
-      ActOnBlob(pProgram.p, pDebugBlob, outputPDBPath.c_str());
+      ActOnBlob(pProgram.p, pDebugBlob, outputPDBPath.c_str()); // !!! this is the part that actually writes spirv to console
 
       // Now write out extra parts
       CComPtr<IDxcResult> pResult;

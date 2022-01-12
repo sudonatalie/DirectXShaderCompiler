@@ -134,4 +134,7 @@ void initializeDxilNoOptSimplifyInstructionsPass(llvm::PassRegistry&);
 ModulePass *createDxilMutateResourceToHandlePass();
 void initializeDxilMutateResourceToHandlePass(llvm::PassRegistry&);
 
+ModulePass *createSpirvGenPass();
+void initializeSpirvGenPass(llvm::PassRegistry &);
+
 }

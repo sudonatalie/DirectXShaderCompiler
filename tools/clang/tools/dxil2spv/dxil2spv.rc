@@ -1,0 +1,13 @@
+// Copyright (c) Microsoft Corporation. All rights reserved.
+//
+
+#include <windows.h>
+#include <ntverp.h>
+
+#define VER_FILETYPE                  VFT_DLL
+#define VER_FILESUBTYPE               VFT_UNKNOWN
+#define VER_FILEDESCRIPTION_STR       "DXIL to SPIR-V Translator"
+#define VER_INTERNALNAME_STR          "DXIL to SPIR-V Translator"
+#define VER_ORIGINALFILENAME_STR      "dxil2spv.exe"
+
+#include <common.ver>

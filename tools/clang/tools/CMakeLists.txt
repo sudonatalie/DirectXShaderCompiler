@@ -37,6 +37,7 @@ add_subdirectory(dxl)
 add_subdirectory(dxr)
 add_subdirectory(dxv)
 add_subdirectory(dxlib-sample)
+add_subdirectory(dxil2spv)
 # UI powered by .NET.
 add_subdirectory(dotnetc)
 endif (WIN32)
