@@ -1638,18 +1638,14 @@ protected:
 // at run time which should be invoked.
 class HelpPrinterWrapper {
 private:
-#if 0 // HLSL Change Starts
   HelpPrinter &UncategorizedPrinter;
   CategorizedHelpPrinter &CategorizedPrinter;
-#endif // HLSL Change Ends
+
 public:
   explicit HelpPrinterWrapper(HelpPrinter &UncategorizedPrinter,
                               CategorizedHelpPrinter &CategorizedPrinter)
-#if 0 // HLSL Change Starts
       : UncategorizedPrinter(UncategorizedPrinter),
-        CategorizedPrinter(CategorizedPrinter)
-#endif // HLSL Change Starts
-  {}
+        CategorizedPrinter(CategorizedPrinter) {}
 
   // Invoke the printer.
   void operator=(bool Value);
@@ -1670,8 +1666,6 @@ static HelpPrinterWrapper WrappedNormalPrinter(UncategorizedNormalPrinter,
                                                CategorizedNormalPrinter);
 static HelpPrinterWrapper WrappedHiddenPrinter(UncategorizedHiddenPrinter,
                                                CategorizedHiddenPrinter);
-
-#if 0 // HLSL Change Starts
 
 // Define a category for generic options that all tools should have.
 static cl::OptionCategory GenericCategory("Generic Options");
@@ -1729,12 +1723,6 @@ void HelpPrinterWrapper::operator=(bool Value) {
   } else
     UncategorizedPrinter = true; // Invoke uncategorized printer
 }
-
-#else
-static const bool PrintOptions = false;
-static const bool PrintAllOptions = false;
-
-#endif // HLSL Change Ends
 
 // Print the value of each option.
 void cl::PrintOptionValues() { GlobalParser->printOptionValues(); }
@@ -1817,14 +1805,10 @@ public:
 // Define the --version option that prints out the LLVM version for the tool
 static VersionPrinter VersionPrinterInstance;
 
-#if 0 // HLSL Change Starts
 static cl::opt<VersionPrinter, true, parser<bool>>
     VersOp("version", cl::desc("Display the version of this program"),
            cl::location(VersionPrinterInstance), cl::ValueDisallowed,
            cl::cat(GenericCategory));
-#else
-static const OptionCategory *GenericCategory;
-#endif // HLSL Change Ends
 
 // Utility function for printing the help message.
 void cl::PrintHelpMessage(bool Hidden, bool Categorized) {
@@ -1864,7 +1848,7 @@ StringMap<Option *> &cl::getRegisteredOptions() {
 void cl::HideUnrelatedOptions(cl::OptionCategory &Category) {
   for (auto &I : GlobalParser->OptionsMap) {
     if (I.second->Category != &Category &&
-        I.second->Category != GenericCategory) // HLSL Change - use pointer
+        I.second->Category != &GenericCategory)
       I.second->setHiddenFlag(cl::ReallyHidden);
   }
 }
@@ -1875,7 +1859,7 @@ void cl::HideUnrelatedOptions(ArrayRef<const cl::OptionCategory *> Categories) {
   for (auto &I : GlobalParser->OptionsMap) {
     if (std::find(CategoriesBegin, CategoriesEnd, I.second->Category) ==
             CategoriesEnd &&
-        I.second->Category != GenericCategory) // HLSL Change - use pointer
+        I.second->Category != &GenericCategory)
       I.second->setHiddenFlag(cl::ReallyHidden);
   }
 }
