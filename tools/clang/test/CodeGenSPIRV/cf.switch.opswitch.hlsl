@@ -384,4 +384,17 @@ void main() {
     result = 0;
     break;
   }
+
+  ///////////////////////////////////
+  // Using int literal as selector //
+  ///////////////////////////////////
+// CHECK:       [[longSelector:%\d+]] = OpLoad %long %sel
+// CHECK-NEXT:                          OpSelectionMerge %switch_merge_10 None
+                                    //  393467   4                16               0           0                  17, 
+// CHECK-NEXT:                          OpSwitch [[longSelector]] %switch_merge_10 12345678910 %switch_12345678910
+  // switch (0) {
+  // case 0:
+  //   result = 0;
+  //   break;
+  // }
 }

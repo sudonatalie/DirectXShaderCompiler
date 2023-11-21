@@ -13,6 +13,7 @@
 #include "clang/AST/HlslTypes.h"
 #include "clang/SPIRV/AstTypeProbe.h"
 #include "clang/SPIRV/SpirvFunction.h"
+#include "llvm/Support/CommandLine.h"
 
 namespace clang {
 namespace spirv {
@@ -251,6 +252,17 @@ bool LowerTypeVisitor::visitInstruction(SpirvInstruction *instr) {
     instr->setResultType(sparseResidencyStruct);
     break;
   }
+  // TODO
+  case spv::Op::OpSwitch: {
+    SpirvSwitch *switchInstr = llvm::cast<SpirvSwitch>(instr);
+    const auto *selectorType = switchInstr->getSelector()->getResultType();
+    uint32_t bitwidth = llvm::cast<NumericalType>(selectorType)->getBitwidth();
+    for (auto &target : switchInstr->getTargets()) {
+      llvm::APInt newTarget = target.first.sextOrTrunc(bitwidth);
+//      target.first = newTarget;
+    }
+    break;
+  }
   default:
     break;
   }
@@ -428,6 +440,7 @@ const SpirvType *LowerTypeVisitor::lowerType(QualType type,
         case BuiltinType::Min16UInt:
           return spvContext.getUIntType(use16Bit ? 16 : 32);
 
+        // STUFF IS HERE
         // All literal types should have been lowered to concrete types before
         // LowerTypeVisitor is invoked. However, if there are unused literals,
         // they will still have 'literal' type when we get to this point. Use

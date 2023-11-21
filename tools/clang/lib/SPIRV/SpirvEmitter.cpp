@@ -23,6 +23,7 @@
 #include "clang/AST/HlslTypes.h"
 #include "clang/AST/RecordLayout.h"
 #include "clang/SPIRV/AstTypeProbe.h"
+#include "clang/SPIRV/SpirvInstruction.h"
 #include "clang/SPIRV/String.h"
 #include "clang/Sema/Sema.h"
 #include "llvm/ADT/APInt.h"
@@ -13544,6 +13545,11 @@ void SpirvEmitter::discoverAllCaseStmtInSwitchStmt(
     Expr::EvalResult evalResult;
     caseExpr->EvaluateAsRValue(evalResult, astContext);
     caseValue = evalResult.Val.getInt();
+    auto *constInit = llvm::cast<SpirvConstantInteger>(tryToEvaluateAsConst(caseExpr));
+    auto apval = constInit->getValue();
+    int bitwidth = apval.getBitWidth();
+    auto spirvInstr = translateAPValue(evalResult.Val, caseExpr->getType());
+
     const int64_t value = caseValue.getSExtValue();
     caseLabel = "switch." + std::string(value < 0 ? "n" : "") +
                 llvm::itostr(std::abs(value));

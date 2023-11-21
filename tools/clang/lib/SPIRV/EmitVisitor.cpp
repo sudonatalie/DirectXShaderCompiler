@@ -831,12 +831,14 @@ bool EmitVisitor::visit(SpirvReturn *inst) {
 
 bool EmitVisitor::visit(SpirvSwitch *inst) {
   initInstruction(inst);
-  curInst.push_back(getOrAssignResultId<SpirvInstruction>(inst->getSelector()));
-  curInst.push_back(
-      getOrAssignResultId<SpirvBasicBlock>(inst->getDefaultLabel()));
+  auto op = getOrAssignResultId<SpirvInstruction>(inst->getSelector());
+  curInst.push_back(op);
+  op = getOrAssignResultId<SpirvBasicBlock>(inst->getDefaultLabel()); 
+  curInst.push_back(op);
   for (const auto &target : inst->getTargets()) {
     typeHandler.emitIntLiteral(target.first, curInst);
-    curInst.push_back(getOrAssignResultId<SpirvBasicBlock>(target.second));
+    op = getOrAssignResultId<SpirvBasicBlock>(target.second);
+    curInst.push_back(op);
   }
   finalizeInstruction(&mainBinary);
   return true;
