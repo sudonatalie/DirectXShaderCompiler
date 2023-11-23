@@ -12585,6 +12585,38 @@ HLSLShaderAttr *ValidateShaderAttributes(Sema &S, Decl *D,
                      A.getAttributeSpellingListIndex());
 }
 
+VKLocationAttr *ValidateVkLocationAttributes(Sema &S, Decl *D,
+                                         const AttributeList &A) {
+  Expr *ArgExpr = A.getArgAsExpr(0);
+  IntegerLiteral *Literal = dyn_cast<IntegerLiteral>(ArgExpr->IgnoreParenCasts());
+  int64_t Value = Literal->getValue().getSExtValue();
+  if (LiteralInt->getValue() < 0) {
+    S.Diag(A.getLoc(),
+           diag::err_hlsl_attribute_expects_string_literal_from_list)
+        << "'shader'"
+        << "!!!! Location can't be negative";
+    return nullptr; // don't create the attribute
+  }
+
+  VKLocationAttr *Existing = D->getAttr<VKLocationAttr>();
+  if (Existing) {
+    DXIL::ShaderKind NewStage =
+        ShaderModel::KindFromFullName(Existing->getNumber());
+    if (Stage == NewStage)
+      return nullptr; // don't create, but no error.
+    else {
+      S.Diag(A.getLoc(), diag::err_hlsl_conflicting_shader_attribute)
+          << ShaderModel::FullNameFromKind(Stage)
+          << ShaderModel::FullNameFromKind(NewStage);
+      S.Diag(Existing->getLocation(), diag::note_conflicting_attribute);
+      return nullptr;
+    }
+  }
+  return ::new (S.Context)
+      VKLocationAttr(A.getRange(), S.Context, Literal->getString(),
+                     A.getAttributeSpellingListIndex());
+}
+
 HLSLMaxRecordsAttr *ValidateMaxRecordsAttributes(Sema &S, Decl *D,
                                                  const AttributeList &A) {
 
@@ -13080,6 +13112,13 @@ void hlsl::HandleDeclAttributeForHLSL(Sema &S, Decl *D, const AttributeList &A,
     break;
   case AttributeList::AT_HLSLShader:
     declAttr = ValidateShaderAttributes(S, D, A);
+    if (!declAttr) {
+      Handled = true;
+      return;
+    }
+    break;
+  case AttributeList::AT_VKLocation:
+    declAttr = ValidateVKLocationAttributes(S, D, A);
     if (!declAttr) {
       Handled = true;
       return;
