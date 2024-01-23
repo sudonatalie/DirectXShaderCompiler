@@ -14,6 +14,6 @@ PatchData HullConst () { return (PatchData)0; }
 [partitioning("fractional_odd")]
 [outputtopology("triangle_cw")]
 [patchconstantfunc("HullConst")]
-// CHECK: OpExecutionMode %Hull OutputVertices 0
+// CHECK-NOT: OpExecutionMode %Hull OutputVertices
 [outputcontrolpoints(0)]
 ControlPoint Hull (InputPatch<ControlPoint,3> v, uint id : SV_OutputControlPointID) { return v[id]; }

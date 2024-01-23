@@ -12710,9 +12710,10 @@ bool SpirvEmitter::processTessellationShaderAttributes(
   }
   if (auto *controlPoints = decl->getAttr<HLSLOutputControlPointsAttr>()) {
     *numOutputControlPoints = controlPoints->getCount();
-    spvBuilder.addExecutionMode(entryFunction,
-                                spv::ExecutionMode::OutputVertices,
-                                {*numOutputControlPoints}, decl->getLocation());
+    if (*numOutputControlPoints != 0)
+      spvBuilder.addExecutionMode(
+          entryFunction, spv::ExecutionMode::OutputVertices,
+          {*numOutputControlPoints}, decl->getLocation());
   }
   if (auto *pcf = decl->getAttr<HLSLPatchConstantFuncAttr>()) {
     llvm::StringRef pcf_name = pcf->getFunctionName();
