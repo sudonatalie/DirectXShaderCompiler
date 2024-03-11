@@ -12569,7 +12569,7 @@ void SpirvEmitter::processPixelShaderAttributes(const FunctionDecl *decl) {
   }
 }
 
-void SpirvEmitter::processComputeShaderAttributes(const FunctionDecl *decl) {
+bool SpirvEmitter::processComputeShaderAttributes(const FunctionDecl *decl) {
   auto *numThreadsAttr = decl->getAttr<HLSLNumThreadsAttr>();
   assert(numThreadsAttr && "thread group size missing from entry-point");
 
@@ -12579,6 +12579,29 @@ void SpirvEmitter::processComputeShaderAttributes(const FunctionDecl *decl) {
 
   spvBuilder.addExecutionMode(entryFunction, spv::ExecutionMode::LocalSize,
                               {x, y, z}, decl->getLocation());
+
+  auto *waveSizeAttr = decl->getAttr<HLSLWaveSizeAttr>();
+  if (!waveSizeAttr)
+    return true;
+  
+  // if (waveSizeAttr->getMin() || waveSizeAttr->getMax()) {
+  //   emitError(
+  //       "WaveSize minimum and maximum values are not supported by SPIR-V",
+  //       waveSizeAttr->getLocation());
+  //   return false;
+  // }
+
+  uint32_t min = static_cast<uint32_t>(waveSizeAttr->getMin());
+  uint32_t max = static_cast<uint32_t>(waveSizeAttr->getMax());
+  
+  featureManager.requestTargetEnv(SPV_ENV_VULKAN_1_3, "WaveSize",
+                                  waveSizeAttr->getLocation());
+  uint32_t preferred = static_cast<uint32_t>(waveSizeAttr->getPreferred());
+  assert(preferred);
+  spvBuilder.addExecutionMode(entryFunction, spv::ExecutionMode::SubgroupSize,
+                              {preferred}, decl->getLocation());
+
+  return true;
 }
 
 bool SpirvEmitter::processTessellationShaderAttributes(
@@ -12989,7 +13012,8 @@ bool SpirvEmitter::emitEntryFunctionWrapper(const FunctionDecl *decl,
   if (spvContext.isPS()) {
     processPixelShaderAttributes(decl);
   } else if (spvContext.isCS()) {
-    processComputeShaderAttributes(decl);
+    if (!processComputeShaderAttributes(decl))
+      return false;
   } else if (spvContext.isHS()) {
     if (!processTessellationShaderAttributes(decl, &numOutputControlPoints))
       return false;

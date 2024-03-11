@@ -898,6 +898,9 @@ bool CapabilityVisitor::visit(SpirvModule *, Visitor::Phase phase) {
       Extension::KHR_vulkan_memory_model,
       {spv::Capability::VulkanMemoryModelDeviceScope});
 
+  if (featureManager.isTargetEnvVulkan1p3OrAbove()) {
+    addCapability(spv::Capability::SubgroupDispatch);
+  }
   return true;
 }
 

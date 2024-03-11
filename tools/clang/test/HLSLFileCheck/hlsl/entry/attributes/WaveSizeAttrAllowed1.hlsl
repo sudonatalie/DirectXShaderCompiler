@@ -10,7 +10,7 @@
 // CHECK-SAME: 32 0 0
 
 [Shader("compute")]
-[WaveSize(32)]
+[WaveSize(8)]
 [numthreads(2,2,1)]
 void CS()
 {

@@ -801,8 +801,9 @@ private:
   void processPixelShaderAttributes(const FunctionDecl *decl);
 
   /// \brief Adds necessary execution modes for the compute shader based on the
-  /// HLSL attributes of the entry point function.
-  void processComputeShaderAttributes(const FunctionDecl *entryFunction);
+  /// HLSL attributes of the entry point function. Returns true on success, and false on
+  /// failure.
+  bool processComputeShaderAttributes(const FunctionDecl *entryFunction);
 
   /// \brief Adds necessary execution modes for the mesh/amplification shader
   /// based on the HLSL attributes of the entry point function.
